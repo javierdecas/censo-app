@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\UsuariosController;
+use App\Http\Controllers\PersonasController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -16,7 +16,10 @@ use App\Http\Controllers\UsuariosController;
 */
 Route::prefix('usuarios')->group(function()
 {
-    Route::put('/crear', [UsuariosController::class, 'crear']);
-    Route::delete('/borrar', [UsuariosController::class, 'borrar']);
+    Route::put('/crear', [PersonasController::class, 'crear']);
+    Route::delete('/borrar', [PersonasController::class, 'borrar']);
+    Route::post('/modificar', [PersonasController::class, 'modificar']);
+    Route::get('/listar', [PersonasController::class, 'listar']);
+    Route::get('/ver', [PersonasController::class, 'ver']);
 });
 
