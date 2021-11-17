@@ -15,7 +15,6 @@ class CreateComunidadsTable extends Migration
     {
         Schema::create('comunidads', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('provincias_id');
             $table->timestamps();
         });
     }
