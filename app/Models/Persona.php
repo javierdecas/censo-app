@@ -7,5 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class Persona extends Model
 {
+    protected $hidden = ['Nombre','Primer apellido','Segundo apellido', 'Fecha de nacimiento'];
     use HasFactory;
 }

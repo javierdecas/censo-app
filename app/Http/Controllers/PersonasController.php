@@ -6,37 +6,171 @@ use Illuminate\Http\Request;
 
 class PersonasController extends Controller
 {
-    public function crear(Request $req)
+    public function crear(Request $req){
+
+        $respuesta = ["status" => 1, "msg" => ""];
+
+        $datos = $req->getContent();
+
+        //VALIDAR EL JSON
+
+        $datos = json_decode($datos); //Se interpreta como objeto. Se puede pasar un parámetro para que en su lugar lo devuelva como array.
+
+        //VALIDAR LOS DATOS
+
+        $persona = new Persona();
+
+        $persona->nombre = $datos->nombre;
+        $persona->dni = $datos->dni;
+        $persona->telefono = $datos->telefono;
+        $persona->direccion = $datos->direccion;
+
+        if(isset($datos->email))
+        {
+            $persona->email = $datos->email;
+        }
+        //Escribir en la base de datos
+        try
+        {
+            $persona->save();
+            $respuesta['msg'] = "Persona guardada con id ".$persona->id;
+        }
+        catch(\Exception $e)
+        {
+            $respuesta['status'] = 0;
+            $respuesta['msg'] = "Se ha producido un error: ".$e->getMessage();
+        }
+
+        return response()->json($respuesta);
+    }
+
+
+    public function borrar($id)
     {
-        die("Hola, has llegado bien.");
-        // $respuesta = ["status"];
-        
-        // $datos = json_decode($datos);
-        // //Validar datos
 
-        // $persona = new Persona();
+        $respuesta = ["status" => 1, "msg" => ""];
 
-        // $persona->nombre = $datos->nombre;
-        // $persona->dni = $datos->dni;
-        // $persona->telefono = $datos->telefono;
-        // $persona->direccion = $datos->direccion;
+        //Buscar a la persona
+        try
+        {
+            $persona = Persona::find($id);
 
-        // if(isset($datos->email))
-        // {
-        //     $persona->email = $datos->email;
+            if($persona){
+                    $persona->delete();
+                    $respuesta['msg'] = "Persona borrada";
+            }else{
+                $respuesta["msg"] = "Persona no encontrada";
+                $respuesta["status"] = 0;
+            }
+        }
+        catch(\Exception $e)
+        {
+            $respuesta['status'] = 0;
+            $respuesta['msg'] = "Se ha producido un error: ".$e->getMessage();
+        }
 
-        //     //Completa resto de campos
-        //     try
-        //     {
-        //         $persona->save();
-        //         $respuesta['msg'] = "Persona guardada con id ".$persona;
-        //     }
-        //     catch(\Exception $e)
-        //     {
-        //         $respuesta['msg'] = $e->getMessage();
-        //         $respuesta['status'] = 0;
-        //     }
-        //     return reponse();
-        //}
+        return response()->json($respuesta);
+    }
+
+
+    public function editar(Request $req,$id)
+    {
+
+        $respuesta = ["status" => 1, "msg" => ""];
+
+        $datos = $req->getContent();
+
+        //VALIDAR EL JSON
+
+        $datos = json_decode($datos); //Se interpreta como objeto. Se puede pasar un parámetro para que en su lugar lo devuelva como array.
+
+
+        //Buscar a la persona
+        try
+        {
+            $persona = Persona::find($id);
+
+            if($persona)
+            {
+
+                //VALIDAR LOS DATOS
+
+                if(isset($datos->nombre))
+                {
+                    $persona->nombre = $datos->nombre;
+                }
+                if(isset($datos->telefono))
+                {
+                    $persona->telefono = $datos->telefono;
+                }
+                if(isset($datos->direccion))
+                {
+                    $persona->direccion = $datos->direccion;
+                }
+                if(isset($datos->email))
+                {
+                    $persona->email = $datos->email;
+                }
+                //Escribir en la base de datos
+                    $persona->save();
+                    $respuesta['msg'] = "Persona actualizada.";
+            }
+            else
+            {
+                $respuesta["msg"] = "Persona no encontrada";
+                $respuesta["status"] = 0;
+            }
+        }
+        catch(\Exception $e)
+        {
+            $respuesta['status'] = 0;
+            $respuesta['msg'] = "Se ha producido un error: ".$e->getMessage();
+        }
+
+        return response()->json($respuesta);
+    }
+
+    public function listar()
+    {
+        $respuesta = ["status" => 1, "msg" => ""];
+
+        try
+        {
+            $respuesta['datos'] = Persona::all();
+        }
+        catch(\Exception $e)
+        {
+            $respuesta['status'] = 0;
+            $respuesta['msg'] = "Se ha producido un error: ".$e->getMessage();
+        }
+
+        return response()->json($respuesta);
+    }
+
+    public function ver($id)
+    {
+        $respuesta = ["status" => 1, "msg" => ""];
+
+        try
+        {
+            $persona = Persona::find($id);
+            if($persona)
+            {
+                $persona->makeVisible('email');
+                $respuesta['datos'] = $persona;
+            }
+            else
+            {
+                $respuesta['status'] = 0;
+                $respuesta['msg'] = "Persona no encontrada.";
+            }
+        }
+        catch(\Exception $e)
+        {
+            $respuesta['status'] = 0;
+            $respuesta['msg'] = "Se ha producido un error: ".$e->getMessage();
+        }
+
+        return response()->json($respuesta);
     }
 }
