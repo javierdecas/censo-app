@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 
 class PersonasController extends Controller
 {
-    public function crear(Request $req){
+    public function crear(Request $req)
+    {
 
         $respuesta = ["status" => 1, "msg" => ""];
 
@@ -21,7 +22,7 @@ class PersonasController extends Controller
         $persona = new Persona();
 
         $persona->nombre = $datos->nombre;
-        $persona->dni = $datos->dni;
+        $persona->primer = $datos->dni;
         $persona->telefono = $datos->telefono;
         $persona->direccion = $datos->direccion;
 
